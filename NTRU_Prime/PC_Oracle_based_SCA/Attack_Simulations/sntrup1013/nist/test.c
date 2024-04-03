@@ -4,7 +4,7 @@
    Copyright © 2017 Bassham, Lawrence E (Fed). All rights reserved.
    + mods from djb: see KATNOTES
 */
-
+// change
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
