@@ -1304,7 +1304,7 @@ int main()
 
               // Now, we are simply checking the current oracle's response... If it does not match, then we simply reject and restart attack... Else, we carry on...
 
-              if(get_er_decrypt_array[0] == 0 && get_er_decrypt_array[1] == 0)
+              /*if(get_er_decrypt_array[0] == 0 && get_er_decrypt_array[1] == 0)
               {
                 touch_0 += 1;
                 zero_indication = zero_indication + 1;
@@ -1403,7 +1403,7 @@ int main()
             }
             printf("Success: %d/%d\n",success_rate,p-sec_index+1);
 
-            #endif
+            #endif */
 
             // Here, we are doing an additional check to see if the oracle's response are very skewed...
             // For example, only returning O for all ciphertexts... or X...
@@ -1426,7 +1426,7 @@ int main()
           // Here we are done with the attack phase... Now, we use the collected oracle's responses and then try to retrieve the secret key...
           // We do not know the collision value or the collision index... So, we iterate over the collision value...
 
-          int break_break = 0;
+          /*int break_break = 0;
 
           for(int coll_index = p-1; coll_index >= 0; coll_index--)
           {
@@ -1584,7 +1584,7 @@ int main()
 
               }
 
-            }
+            }*/
           }
 
           reached = 1;
