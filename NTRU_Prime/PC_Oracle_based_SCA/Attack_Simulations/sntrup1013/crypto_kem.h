@@ -50,6 +50,8 @@ int c_value_1;
 int c_value_2;
 int c_value_for_attack_1;
 int c_value_for_attack_2;
+int c_value_for_attack_3;
+int c_value_for_attack_4;
 
 int c_value_for_leakage;
 int collision_index;
