@@ -100,6 +100,9 @@ extern int c_value_1;
 extern int c_value_2;
 extern int c_value_for_attack_1;
 extern int c_value_for_attack_2;
+extern int c_value_for_attack_3;                               //changed here (crypto_kem.h)
+extern int c_value_for_attack_4;
+
 
 int no_true_collisions;
 
@@ -111,8 +114,18 @@ int c_value_for_attack_2_1;
 int c_value_for_attack_2_2;
 int c_value_for_attack_2_3;
 
+int c_value_for_attack_3_1;                                //changed here
+int c_value_for_attack_3_2;
+int c_value_for_attack_3_3;
+
+int c_value_for_attack_4_1;                                //changed here
+int c_value_for_attack_4_2;
+int c_value_for_attack_4_3;
+
 int c1_value_1, c1_value_2, c1_value_3;
 int c2_value_1, c2_value_2, c2_value_3;
+int c3_value_1, c3_value_2, c3_value_3;
+int c4_value_1, c4_value_2, c4_value_3;
 
 extern int c_value_for_leakage;
 extern int collision_index;
@@ -721,6 +734,22 @@ static void Encrypt(Fq *c,const small *r,const Fq *h)
     {
       c_value_for_now = c_value_for_attack_2;
     }
+    else if(check_for_value == 3)
+    {
+      c_value_for_now = c_value_for_attack_3;
+    }
+    else if(check_for_value == -3)
+    {
+      c_value_for_now = c_value_for_attack_3;
+    }
+    else if(check_for_value == 4)
+    {
+      c_value_for_now = c_value_for_attack_4;
+    }
+    else if(check_for_value == -4)                                  //changed here
+    {
+      c_value_for_now = c_value_for_attack_4;
+    }
 
     int c_value_for_now_1;
     int c_value_for_now_2;
@@ -750,18 +779,42 @@ static void Encrypt(Fq *c,const small *r,const Fq *h)
       c_value_for_now_2 = c_value_for_attack_2_2;
       c_value_for_now_3 = c_value_for_attack_2_3;
     }
+    else if(check_for_value == 3)                                          //changed here
+    {
+      c_value_for_now_1 = c_value_for_attack_3_1;
+      c_value_for_now_2 = c_value_for_attack_3_2;
+      c_value_for_now_3 = c_value_for_attack_3_3;
+    }
+    else if(check_for_value == -3)
+    {
+      c_value_for_now_1 = c_value_for_attack_3_1;
+      c_value_for_now_2 = c_value_for_attack_3_2;
+      c_value_for_now_3 = c_value_for_attack_3_3;
+    }
+    else if(check_for_value == 4)
+    {
+      c_value_for_now_1 = c_value_for_attack_4_1;
+      c_value_for_now_2 = c_value_for_attack_4_2;
+      c_value_for_now_3 = c_value_for_attack_4_3;
+    }
+    else if(check_for_value == -4)
+    {
+      c_value_for_now_1 = c_value_for_attack_4_1;                      
+      c_value_for_now_2 = c_value_for_attack_4_2;
+      c_value_for_now_3 = c_value_for_attack_4_3;
+    }
 
     int temp_value;
     int mul_const;
 
     if(check_for_value < 0)
-      mul_const = -1;
+      mul_const = -1;                 //x^{u}? (x^{u}+x^{v}), u,v\in [0,p-1]
     else
       mul_const = 1;
 
     for(int sd = 0; sd < p; sd++)
     {
-      temp_value = (x_f_array[sd])*c_value_for_now_1 + (x_g_int[sd])*c_value_for_now_3 + (x_f_attack_array[sd]*mul_const*c_value_for_now_2);
+      temp_value = (x_f_array[sd])*c_value_for_now_1 + (x_g_int[sd])*c_value_for_now_3 + (x_f_attack_array[sd]*mul_const*c_value_for_now_2);            //??
       hr[sd] = Fq_freeze(temp_value);
     }
 

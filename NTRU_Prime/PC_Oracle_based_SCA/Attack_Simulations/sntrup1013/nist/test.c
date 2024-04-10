@@ -178,8 +178,20 @@ extern int c_value_for_attack_2_1;
 extern int c_value_for_attack_2_2;
 extern int c_value_for_attack_2_3;
 
+
+extern int c_value_for_attack_3_1;                                //changed here
+extern int c_value_for_attack_3_2;
+extern int c_value_for_attack_3_3;
+
+extern int c_value_for_attack_4_1;                                //changed here
+extern int c_value_for_attack_4_2;                                 //(kem_mod.c)
+extern int c_value_for_attack_4_3;
+
 extern int c1_value_1, c1_value_2, c1_value_3;
 extern int c2_value_1, c2_value_2, c2_value_3;
+extern int c3_value_1, c3_value_2, c3_value_3;            //(kem_mod.c)
+extern int c4_value_1, c4_value_2, c4_value_3;    
+
 
 int weight_for_secret;
 
@@ -311,21 +323,27 @@ int main()
     }
 
 
-    int list_of_c1_values[30][10];
+    int list_of_c1_values[30][10];                                                                         
     int list_of_c2_values[30][10];
+    int list_of_c3_values[30][10];                                                                          //changed
+    int list_of_c4_values[30][10];
 
 
-    int no_c1_values = 0;
+    int no_c1_values = 0;                                                                                 
     int no_c2_values = 0;
+    int no_c3_values = 0;                                                                                   //changed
+    int no_c4_values = 0;
 
     int found_c_for_attack_1 = 0;
     int found_c_for_attack_2 = 0;
+    int found_c_for_attack_3 = 0;                                                                          //changed
+    int found_c_for_attack_4 = 0;
 
     int sample_1, sample_2, sample_3;
 
     printf("Found c\n");
 
-    // Here, we are trying to compute l1, l2 and l3 for the attack ciphertexts as shown in the paper...
+    // Here, we are trying to compute l1, l2 and l3 for the attack ciphertexts as shown in the paper... 
     // We compute l1, l2, l3 is used to distinguish 1...
 
     max_distance = 1000000;
@@ -345,7 +363,7 @@ int main()
             sample_2 = hg1;
             sample_3 = hg2;
 
-            int value1 = sample_1 * (3*2*m) + sample_3 * (2*n) + sample_2 * (3*1);
+            int value1 = sample_1 * (3*2*m) + sample_3 * (2*n) + sample_2 * (3*1); 
             int value2;
 
             int touch_np = 0;
@@ -357,10 +375,10 @@ int main()
             {
               for(int poss1 = 0; poss1 <= 2*n; poss1++)
               {
-                for(int poss2 = 0; poss2 <= 2; poss2++)
+                for(int poss2 = 0; poss2 <= 4; poss2++)                                                               // poss2 is changed, corresponding to \beta_{u}\in [-4,4]
                 {
 
-                  if(!((poss == 2*m) && (poss1 == 2*n) && ((poss2 == 1) || (poss2 == 2))))
+                  if(!((poss == 2*m) && (poss1 == 2*n) && ((poss2 == 1) || (poss2 == 2) || (poss2 == 3) || (poss2 == 4))))
                   {
 
                     value2 = sample_1 * (3*poss) + sample_3 * poss1 + sample_2 * (3*poss2);
@@ -439,10 +457,10 @@ int main()
             {
               for(int poss1 = 0; poss1 <= (2*n); poss1++)
               {
-                for(int poss2 = 0; poss2 <= 2; poss2++)
+                for(int poss2 = 0; poss2 <= 4; poss2++)
                 {
 
-                  if(!((poss == 2*m) && (poss1 == (2*n)) && (poss2 == 2)))
+                  if(!((poss == 2*m) && (poss1 == (2*n)) && ((poss2 == 2) || (poss2 == 3) || (poss2 == 4))))
                   {
                     value2 = sample_1 * (3*poss) + sample_3 * poss1 + sample_2 * (3*poss2);
 
@@ -483,6 +501,164 @@ int main()
 
     printf("Found c_2\n");
 
+    // Here, we are trying to compute l1, l2 and l3 for the attack ciphertexts as shown in the paper...
+    // We compute l1, l2, l3 is used to distinguish 3...
+
+    max_distance2 = 0;
+
+    limit_value = 1000;
+
+    while(found_c_for_attack_3 == 0)
+    {
+
+      for(int hg = 0; hg < limit_value; hg = hg+3)
+      {
+
+        for(int hg1 = 0; hg1 < limit_value; hg1 = hg1+3)
+        {
+
+          for(int hg2 = 0; hg2 < limit_value; hg2 = hg2+3)
+          {
+
+            sample_1 = hg;
+            sample_2 = hg1;
+            sample_3 = hg2;
+
+            int value1 = sample_1 * (3*2*m) + sample_3 * (2*n) + sample_2 * (3*3);
+
+            int value2;
+
+            int touch_np = 0;
+            max_distance = 1000000;
+
+            for(int poss = 0; poss <= 2*m; poss++)
+            {
+              for(int poss1 = 0; poss1 <= (2*n); poss1++)
+              {
+                for(int poss2 = 0; poss2 <= 4; poss2++)
+                {
+
+                  if(!((poss == 2*m) && (poss1 == (2*n)) && ((poss2 == 3) || (poss2 == 4))))
+                  {
+                    value2 = sample_1 * (3*poss) + sample_3 * poss1 + sample_2 * (3*poss2);
+
+                    if(max_distance > (abs(q12 - value2)))
+                      max_distance = (abs(q12 - value2));
+
+                    if((value1 < q12) || (value2 > q12)
+                      || (abs(value1 - q12) < GAP_THRESHOLD_2_1) || (abs(value2 - q12) < GAP_THRESHOLD_2_2))
+                    {
+                      touch_np = 1;
+                    }
+
+                  }
+                }
+              }
+            }
+
+            if(touch_np == 0)
+            {
+              found_c_for_attack_3 = 1;
+
+              if(max_distance > max_distance2)
+              {
+
+                c3_value_1 = hg;
+                c3_value_2 = hg1;
+                c3_value_3 = hg2;
+
+                max_distance2 = max_distance;
+
+                printf("hg = %d, hg1 = %d, hg2 = %d, Diff1: %d, Diff2: %d\n", hg, hg1, hg2, abs(q12 - value1), max_distance2);
+              }
+            }
+          }
+        }
+      }
+    }
+
+
+    printf("Found c_3\n");
+    // Here, we are trying to compute l1, l2 and l3 for the attack ciphertexts as shown in the paper...
+    // We compute l1, l2, l3 is used to distinguish 4...
+
+    max_distance2 = 0;
+
+    limit_value = 1000;
+
+    while(found_c_for_attack_4 == 0)
+    {
+
+      for(int hg = 0; hg < limit_value; hg = hg+3)
+      {
+
+        for(int hg1 = 0; hg1 < limit_value; hg1 = hg1+3)
+        {
+
+          for(int hg2 = 0; hg2 < limit_value; hg2 = hg2+3)
+          {
+
+            sample_1 = hg;
+            sample_2 = hg1;
+            sample_3 = hg2;
+
+            int value1 = sample_1 * (3*2*m) + sample_3 * (2*n) + sample_2 * (3*4);
+
+            int value2;
+
+            int touch_np = 0;
+            max_distance = 1000000;
+
+            for(int poss = 0; poss <= 2*m; poss++)
+            {
+              for(int poss1 = 0; poss1 <= (2*n); poss1++)
+              {
+                for(int poss2 = 0; poss2 <= 4; poss2++)
+                {
+
+                  if(!((poss == 2*m) && (poss1 == (2*n)) && ( poss2 == 4)))
+                  {
+                    value2 = sample_1 * (3*poss) + sample_3 * poss1 + sample_2 * (3*poss2);
+
+                    if(max_distance > (abs(q12 - value2)))
+                      max_distance = (abs(q12 - value2));
+
+                    if((value1 < q12) || (value2 > q12)
+                      || (abs(value1 - q12) < GAP_THRESHOLD_2_1) || (abs(value2 - q12) < GAP_THRESHOLD_2_2))
+                    {
+                      touch_np = 1;
+                    }
+
+                  }
+                }
+              }
+            }
+
+            if(touch_np == 0)
+            {
+              found_c_for_attack_4 = 1;
+
+              if(max_distance > max_distance2)
+              {
+
+                c4_value_1 = hg;
+                c4_value_2 = hg1;
+                c4_value_3 = hg2;
+
+                max_distance2 = max_distance;
+
+                printf("hg = %d, hg1 = %d, hg2 = %d, Diff1: %d, Diff2: %d\n", hg, hg1, hg2, abs(q12 - value1), max_distance2);
+              }
+            }
+          }
+        }
+      }
+    }
+
+
+    printf("Found c_4\n");
+
+
 
     c_value_for_attack_1_1 = c1_value_1;
     c_value_for_attack_1_2 = c1_value_2;
@@ -491,9 +667,15 @@ int main()
     c_value_for_attack_2_1 = c2_value_1;
     c_value_for_attack_2_2 = c2_value_2;
     c_value_for_attack_2_3 = c2_value_3;
+    
+    c_value_for_attack_3_1 = c2_value_1;
+    c_value_for_attack_3_2 = c2_value_2;
+    c_value_for_attack_3_3 = c2_value_3;
 
-
-    // So, we basically get two values for the (l1, l2, l3)... Let us denote them as (l11, l12, l13) and (l21, l22, l23)...
+    c_value_for_attack_4_1 = c2_value_1;
+    c_value_for_attack_4_2 = c2_value_2;
+    c_value_for_attack_4_3 = c2_value_3;
+    // So, we basically get two values for the (l1, l2, l3)... Let us denote them as (l11, l12, l13) and (l21, l22, l23)...  
     // The attack ciphertexts are c = l1. d1 + l2. d2 . h + l3. x^u. (x-1)...
 
     //       (l11,l12,l13)     (l21,l22,l23)      (l11,l12,-l13)      (l21,l22,-l23)
@@ -507,7 +689,7 @@ int main()
     double profile_average_count = 0;
     double trace_average_count = 0;
 
-    // Iterate over the number of tests you want to run... The NO_TESTS variable is defined in params.h header file...
+    // Iterate over the number of tests you want to run... The NO_TESTS variable is defined in params.h header file... //#define NO_TESTS 10000
 
 
     if (!ct) ct = malloc(crypto_kem_CIPHERTEXTBYTES);
@@ -607,8 +789,8 @@ int main()
         int no_queries = 0;
         int match_success = 0;
 
-        uint8_t oracle_responses[TRIALS_FOR_SHUFFLING][4*p];
-        uint8_t shuffling_oracle_responses[TRIALS_FOR_SHUFFLING][4*p];
+        uint8_t oracle_responses[TRIALS_FOR_SHUFFLING][8*p];                    //8*p
+        uint8_t shuffling_oracle_responses[TRIALS_FOR_SHUFFLING][8*p];
 
         int oracle_response_count = 0;
 
@@ -636,7 +818,7 @@ int main()
             }
 
 
-            oracle_response_count = oracle_response_count - 4*p;
+            oracle_response_count = oracle_response_count - 8*p;                      
             match_success = 0;
 
             #if (DO_PRINT == 1)
@@ -662,7 +844,7 @@ int main()
 
           success_touch = 0;
           now_response_count = 0;
-
+          
           rej:
           printf("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%TRIAL%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
 
@@ -889,7 +1071,7 @@ int main()
 
           int get_er_decrypt_array[2];
 
-          int get_er_decrypt_array_all[4*p];
+          int get_er_decrypt_array_all[ *p]; // int get_er_decrypt_array_all[8*p]
           int count_get_er_decrypt_array_all = 0;
 
           int check_value_whether_correct = 0;
@@ -910,7 +1092,7 @@ int main()
           // We now try to get the oracle's responses for the attack ciphertext c = l1. d1 + l2. d2. h + l3...
           // This will correspond to the secret coefficient of the colliding index i...
 
-          // Here, we get oracle responses for attack ciphertexts corresponding to (l11,l12,l13), (l11,l12,-l13), (l21,l22,l23), (l11,l12,-l13)...
+          // Here, we get oracle responses for attack ciphertexts corresponding to (l11,l12,l13), (l11,l12,-l13), (l21,l22,l23), (l11,l12,-l13),(l31,l32,l33), (l31,l32,-l33) (l41,l42,l43), (l41,l42,-l43) ...
 
           for(int check1 = 0; check1 < 2; check1++)
           {
@@ -923,7 +1105,7 @@ int main()
             else
               mul_value = -1;
 
-            check_for_value = mul_value * 1;
+            check_for_value = mul_value * 1;     
 
             crypto_kem_enc(ct, ss, pk);
             crypto_kem_dec(ss1, ct, sk);
@@ -1028,10 +1210,114 @@ int main()
             fclose(f2);
 
             #endif
+           
+            // (l31,l32,l33) if check1 = 0, else (l31,l32,-l33)
+
+            check_for_value = mul_value * 3;
+
+            crypto_kem_enc(ct, ss, pk);
+            crypto_kem_dec(ss1, ct, sk);
+            no_queries = no_queries+1;
+
+            #if (DO_PRINT == 1)
+
+            f2 = fopen(ct_file_now, "a");
+            for(int pp1=0;pp1<crypto_kem_CIPHERTEXTBYTES;pp1++)
+            {
+              fprintf(f2,"%02x", ct[pp1]);
+            }
+            fclose(f2);
+
+            #endif
+
+            // Getting oracle response...
+
+            weight_hh = 0;
+            for(int jh = 0; jh < p; jh++)
+            {
+              if(abs(er_decrypt[jh]) > 0)
+                weight_hh = weight_hh + 1;
+            }
+
+            // Storing the oracle's response...
+
+            if(weight_hh != 0)
+              get_er_decrypt_array[2] = -1;
+            else
+              get_er_decrypt_array[2] = 0;
+
+            if(weight_hh != 0)
+              get_er_decrypt_array_all[count_get_er_decrypt_array_all] = -1;
+            else
+              get_er_decrypt_array_all[count_get_er_decrypt_array_all] = 0;
+
+            count_get_er_decrypt_array_all = count_get_er_decrypt_array_all + 1;
+
+            temp_temp_char = get_er_decrypt_array[2] & 0xFF;
+
+            #if (DO_PRINT == 1)
+
+            f2 = fopen(oracle_responses_now_file_name, "a");
+            fprintf(f2,"%02x", temp_temp_char);
+            fclose(f2);
+
+            #endif
+
+            // (l21,l22,l23) if check1 = 0, else (l21,l22,-l23)
+
+            check_for_value = mul_value * 4;
+
+            crypto_kem_enc(ct, ss, pk);
+            crypto_kem_dec(ss1, ct, sk);
+            no_queries = no_queries+1;
+
+            #if (DO_PRINT == 1)
+
+            f2 = fopen(ct_file_now, "a");
+            for(int pp1=0;pp1<crypto_kem_CIPHERTEXTBYTES;pp1++)
+            {
+              fprintf(f2,"%02x", ct[pp1]);
+            }
+            fclose(f2);
+
+            #endif
+
+            // Getting oracle response...
+
+            weight_hh = 0;
+            for(int jh = 0; jh < p; jh++)
+            {
+              if(abs(er_decrypt[jh]) > 0)
+                weight_hh = weight_hh + 1;
+            }
+
+            // Storing the oracle's response...
+
+            if(weight_hh != 0)
+              get_er_decrypt_array[3] = -1;
+            else
+              get_er_decrypt_array[3] = 0;
+
+            if(weight_hh != 0)
+              get_er_decrypt_array_all[count_get_er_decrypt_array_all] = -1;
+            else
+              get_er_decrypt_array_all[count_get_er_decrypt_array_all] = 0;
+
+            count_get_er_decrypt_array_all = count_get_er_decrypt_array_all + 1;
+
+            temp_temp_char = get_er_decrypt_array[3] & 0xFF;
+
+            #if (DO_PRINT == 1)
+
+            f2 = fopen(oracle_responses_now_file_name, "a");
+            fprintf(f2,"%02x", temp_temp_char);
+            fclose(f2);
+
+            #endif
 
             // Now, we are simply checking the current oracle's response... If it does not match, then we simply reject and restart attack... Else, we carry on...
 
-            if(get_er_decrypt_array[0] == 0 && get_er_decrypt_array[1] == 0)
+            /*if(get_er_decrypt_array[0] == 0 && get_er_decrypt_array[1] == 0)
             {
               zero_indication = zero_indication + 1;
             }
@@ -1050,7 +1336,7 @@ int main()
                 break;
               }
               else if(zero_indication == 1)
-              {
+              { 
                 #if (COLL_CHECK == 1)
 
                 found_secret_coeff = 1*collision_value;
@@ -1103,10 +1389,9 @@ int main()
               rejected = 1;
               printf("Oracle Values...\n");
               goto rej;
-            }
+            }*/
 
           }
-
           if(finding_secret_coeff == 0)
           {
             no_queries = no_queries - 1;
@@ -1175,7 +1460,7 @@ int main()
 
             int zero_indication = 0;
             int finding_secret_coeff = 0;
-
+            
             // Here, we get oracle responses for attack ciphertexts corresponding to (l11,l12,l13), (l11,l12,-l13), (l21,l22,l23), (l11,l12,-l13)...
 
             for(int check1 = 0; check1 < 2; check1++)
@@ -1300,7 +1585,116 @@ int main()
 
               #endif
 
-              check_value_whether_correct = check_value_whether_correct + ((get_er_decrypt_array[0] ^ get_er_decrypt_array[1]) & 0x1);
+              // (l31,l32,l33) if check1 = 0, else (l31,l32,-l33)
+
+              check_for_value = mul_value * 3;
+
+              crypto_kem_enc(ct, ss, pk);
+              crypto_kem_dec(ss1, ct, sk);
+              no_queries = no_queries+1;
+
+              #if (DO_PRINT == 1)
+
+              f2 = fopen(ct_file_now, "a");
+              for(int pp1=0;pp1<crypto_kem_CIPHERTEXTBYTES;pp1++)
+              {
+                fprintf(f2,"%02x", ct[pp1]);
+              }
+              fclose(f2);
+
+              #endif
+
+              // Getting oracle response...
+
+              weight_hh = 0;
+              for(int jh = 0; jh < p; jh++)
+              {
+                if(abs(er_decrypt[jh]) > 0)
+                {
+                  weight_hh = weight_hh + 1;
+                }
+              }
+
+              // Storing the oracle response...
+
+              if(weight_hh != 0)
+                get_er_decrypt_array[2] = -1;
+              else
+                get_er_decrypt_array[2] = 0;
+
+              if(weight_hh != 0)
+                get_er_decrypt_array_all[count_get_er_decrypt_array_all] = -1;
+              else
+                get_er_decrypt_array_all[count_get_er_decrypt_array_all] = 0;
+
+              count_get_er_decrypt_array_all = count_get_er_decrypt_array_all + 1;
+
+              temp_temp_char = get_er_decrypt_array[2] & 0xFF;
+
+              #if (DO_PRINT == 1)
+
+              f2 = fopen(oracle_responses_now_file_name, "a");
+              fprintf(f2,"%02x", temp_temp_char);
+              fclose(f2);
+
+              #endif
+
+               // (l41,l42,l43) if check1 = 0, else (l41,l42,-l43)
+
+              check_for_value = mul_value * 4;
+
+              crypto_kem_enc(ct, ss, pk);
+              crypto_kem_dec(ss1, ct, sk);
+              no_queries = no_queries+1;
+
+              #if (DO_PRINT == 1)
+
+              f2 = fopen(ct_file_now, "a");
+              for(int pp1=0;pp1<crypto_kem_CIPHERTEXTBYTES;pp1++)
+              {
+                fprintf(f2,"%02x", ct[pp1]);
+              }
+              fclose(f2);
+
+              #endif
+
+              // Getting oracle response...
+
+              weight_hh = 0;
+              for(int jh = 0; jh < p; jh++)
+              {
+                if(abs(er_decrypt[jh]) > 0)
+                {
+                  weight_hh = weight_hh + 1;
+                }
+              }
+
+              // Storing the oracle response...
+
+              if(weight_hh != 0)
+                get_er_decrypt_array[3] = -1;
+              else
+                get_er_decrypt_array[3] = 0;
+
+              if(weight_hh != 0)
+                get_er_decrypt_array_all[count_get_er_decrypt_array_all] = -1;
+              else
+                get_er_decrypt_array_all[count_get_er_decrypt_array_all] = 0;
+
+              count_get_er_decrypt_array_all = count_get_er_decrypt_array_all + 1;
+
+              temp_temp_char = get_er_decrypt_array[3] & 0xFF;
+
+              #if (DO_PRINT == 1)
+
+              f2 = fopen(oracle_responses_now_file_name, "a");
+              fprintf(f2,"%02x", temp_temp_char);
+              fclose(f2);
+
+              #endif
+
+
+              check_value_whether_correct = check_value_whether_correct + ((get_er_decrypt_array[0] ^ get_er_decrypt_array[1] ^ get_er_decrypt_array[2] ^ get_er_decrypt_array[3]) & 0x1);
 
               // Now, we are simply checking the current oracle's response... If it does not match, then we simply reject and restart attack... Else, we carry on...
 
@@ -1371,9 +1765,8 @@ int main()
                 rejected = 1;
                 printf("Oracle Values...\n");
                 goto rej;
-              }
+              }*/
             }
-
             if(finding_secret_coeff == 0)
             {
               found_secret_coeff = 0;
@@ -1402,8 +1795,9 @@ int main()
 
             }
             printf("Success: %d/%d\n",success_rate,p-sec_index+1);
+            
 
-            #endif */
+            #endif 
 
             // Here, we are doing an additional check to see if the oracle's response are very skewed...
             // For example, only returning O for all ciphertexts... or X...
@@ -1422,7 +1816,7 @@ int main()
 
             no_coeffs_gone = no_coeffs_gone + 1;
           }
-
+            
           // Here we are done with the attack phase... Now, we use the collected oracle's responses and then try to retrieve the secret key...
           // We do not know the collision value or the collision index... So, we iterate over the collision value...
 
@@ -1584,11 +1978,11 @@ int main()
 
               }
 
-            }*/
-          }
+            }
+          }*/
 
           reached = 1;
-          printf("Reached Here...\n");
+          printf("Reached Here...\n"); 
 
           profile_average_count = profile_average_count + profile_trials;
           trace_average_count = trace_average_count + (no_queries + (profile_trials)*10);
@@ -1601,6 +1995,7 @@ int main()
           #endif
 
         }
+     
     }
 
     profile_average_count = profile_average_count/NO_TESTS;
